@@ -1,0 +1,5 @@
+<div class=\"bg-red-200\" id=\"outer-task\"><p>Your task:</p><div id=\"tasks\">
+</div></div><div class=\"bg-red-200\"><form hx-post=\"/api/add-task\" hx-target=\"#tasks\" hx-swap=\"beforeend\"><label for=\"task\">Task:</label> <input type=\"text\" id=\"task\" name=\"task\" required><br><button type=\"submit\" value=\"Submit\">Submit</button></form></div>
+<div><form hx-delete=\"/api/delete-task\" hx-target=\"this\"><button type=\"submit\" class=\"items-end\" value=\"
+\" name=\"delete\">DELETE</button><p>
+</p></form><br></div>

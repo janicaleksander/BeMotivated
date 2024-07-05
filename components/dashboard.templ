@@ -1,0 +1,46 @@
+package components
+import (
+"github.com/janicaleksander/BeMotivated/types"
+"strconv"
+
+)
+
+
+templ Main(slice []types.Task) {
+<div class="bg-red-200" id="outer-task" >
+    <p>Your task:</p>
+    <div id="tasks">
+        for _, item := range slice {
+            @Task(item)
+        }
+    </div>
+</div>
+<div class="bg-red-200">
+    <form hx-post="/api/add-task" hx-target="#tasks" hx-swap="beforeend" >
+        <label for="task">Task:</label>
+        <input type="text" id="task" name="task" required ><br>
+        <button type="submit" value="Submit">Submit</button>
+    </form>
+
+</div>
+
+}
+
+
+templ Dashboard(slice []types.Task) {
+ @Layout(Main(slice))
+}
+
+templ Task(t types.Task) {
+<div >
+<form hx-delete="/api/delete-task" hx-target="this">
+    <button  type="submit" class="items-end" value={strconv.Itoa(t.ItemID)} name="delete">DELETE</button>
+    <p>{ t.Description }</p>
+
+</form>
+<br>
+</div>
+}
+
+
+
