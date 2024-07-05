@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"github.com/gorilla/mux"
 	"github.com/janicaleksander/BeMotivated/storage"
 	"github.com/janicaleksander/BeMotivated/types"
 	"log"
@@ -37,12 +36,22 @@ func prepareHandle(f apiFunc) http.HandlerFunc {
 }
 
 func (s *APIServer) Run() {
-	router := mux.NewRouter()
+	router := http.NewServeMux()
+	fs := http.FileServer(http.Dir("static"))
+	router.Handle("/static/", http.StripPrefix("/static/", fs))
+
 	router.HandleFunc("/api/register", prepareHandle(s.handleRegister))
 	router.HandleFunc("/api/login", prepareHandle(s.handleLogin))
 	router.HandleFunc("/api/dashboard", prepareHandle(s.handleDashboard))
 	router.HandleFunc("/api/logout", prepareHandle(s.handleLogOut))
+	router.HandleFunc("/api/add-task", prepareHandle(s.handleAddTask))
+	router.HandleFunc("/api/delete-task", prepareHandle(s.handleDeleteTask))
+
+	router.HandleFunc("/api/test", prepareHandle(s.handleTest))
+	router.HandleFunc("/api/test/dashboard", prepareHandle(s.handleTestDashboard))
+	router.HandleFunc("/api/test/tasks", prepareHandle(s.handleTestTasks))
+
 	log.Println("Running on: ", s.ListenAddress)
-	http.ListenAndServe(s.ListenAddress, router)
+	log.Fatal(http.ListenAndServe(s.ListenAddress, router))
 
 }

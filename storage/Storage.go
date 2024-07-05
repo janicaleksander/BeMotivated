@@ -15,21 +15,25 @@ const (
 	port     = 5432
 	user     = "postgres"
 	password = "qwop"
-	dbname   = "postgres"
+
+	dbname = "postgres"
 )
 
 type Storage interface {
 	GetDataBase() (*sql.DB, error)
 	CreateAccount(*types.Account) error
 	GetAccount(email, pwd string) (*types.Account, error)
+	CreateTask(task *types.Task) error
+	GetTask(id int) ([]types.Task, error)
+	DeleteTask(itemID int) error
 }
 
 type Postgres struct {
 	db *sql.DB
 }
 
-func (s *Postgres) Init() error {
-	return s.createAccountTable()
+func (s *Postgres) Init() (error, error) {
+	return s.createAccountTable(), s.createTaskTable()
 }
 
 func NewPostgresDB() (*Postgres, error) {
@@ -46,6 +50,17 @@ func NewPostgresDB() (*Postgres, error) {
 	return &Postgres{db: db}, nil
 }
 
+func (s *Postgres) createTaskTable() error {
+	query := `CREATE TABLE IF NOT EXISTS task (
+        user_id  int,
+        item_id SERIAL PRIMARY KEY,
+        description VARCHAR(255),
+        created_at TIMESTAMP
+    )`
+	_, err := s.db.Exec(query)
+	fmt.Println(err)
+	return err
+}
 func (s *Postgres) createAccountTable() error {
 	query := `CREATE TABLE IF NOT EXISTS account (
         id SERIAL PRIMARY KEY,
@@ -56,6 +71,13 @@ func (s *Postgres) createAccountTable() error {
     )`
 	_, err := s.db.Exec(query)
 	return err
+}
+
+func (s *Postgres) GetDataBase() (*sql.DB, error) {
+	if s.db == nil {
+		return nil, errors.New("database connection is nil")
+	}
+	return s.db, nil
 }
 
 func (s *Postgres) CreateAccount(acc *types.Account) error {
@@ -69,13 +91,6 @@ func (s *Postgres) CreateAccount(acc *types.Account) error {
 	_, err := s.db.Exec(query, acc.Nickname, acc.Email, acc.Password, acc.CreatedAt)
 	return err
 
-}
-
-func (s *Postgres) GetDataBase() (*sql.DB, error) {
-	if s.db == nil {
-		return nil, errors.New("database connection is nil")
-	}
-	return s.db, nil
 }
 
 func (s *Postgres) checkUnique(param string, value string) error {
@@ -101,6 +116,9 @@ func (s *Postgres) checkUnique(param string, value string) error {
 	return errors.New("Not unique")
 }
 func (s *Postgres) GetAccount(email, pwd string) (*types.Account, error) {
+	if email == "" || pwd == "" {
+		return nil, errors.New("error")
+	}
 	query := "SELECT * FROM account WHERE email=$1"
 	row, err := s.db.Query(query, email)
 	if err != nil {
@@ -125,6 +143,45 @@ func (s *Postgres) GetAccount(email, pwd string) (*types.Account, error) {
 
 }
 
+func (s *Postgres) CreateTask(task *types.Task) error {
+	query := `INSERT INTO task (user_id, description, created_at) VALUES ($1, $2, $3) RETURNING item_id`
+	var id int
+	err := s.db.QueryRow(query, task.UserID, task.Description, task.CreatedAt).Scan(&id)
+	if err != nil {
+		return err
+	}
+	task.ItemID = id
+	return nil
+}
+
+func (s *Postgres) GetTask(id int) ([]types.Task, error) {
+	query := `SELECT * FROM task WHERE user_id=$1`
+	row, err := s.db.Query(query, id)
+	if err != nil {
+		return nil, err
+	}
+	var slice []types.Task
+
+	for row.Next() {
+		task, err := scanIntoTask(row)
+		if err != nil {
+			return nil, err
+		}
+		slice = append(slice, *task)
+	}
+	return slice, nil
+}
+
+func (s *Postgres) DeleteTask(itemID int) error {
+	query := `DELETE FROM task WHERE item_id=$1`
+	_, err := s.db.Query(query, itemID)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	return nil
+
+}
 func scanIntoAccount(row *sql.Rows) (*types.Account, error) {
 	account := new(types.Account)
 	err := row.Scan(
@@ -135,4 +192,13 @@ func scanIntoAccount(row *sql.Rows) (*types.Account, error) {
 		&account.CreatedAt)
 
 	return account, err
+}
+func scanIntoTask(row *sql.Rows) (*types.Task, error) {
+	task := new(types.Task)
+	err := row.Scan(
+		&task.UserID,
+		&task.ItemID,
+		&task.Description,
+		&task.CreatedAt)
+	return task, err
 }

@@ -14,7 +14,6 @@ type Account struct {
 }
 
 func NewAccount(nick string, email string, password string) (acc *Account) {
-
 	hashedPassword := HashingPassword(password)
 	acc = &Account{
 		Nickname:  nick,
@@ -22,12 +21,9 @@ func NewAccount(nick string, email string, password string) (acc *Account) {
 		Password:  hashedPassword,
 		CreatedAt: time.Now().UTC(),
 	}
-
-	//oblsuga unique Nickname, email
 	return acc
 
 }
-
 func HashingPassword(password string) string {
 	pwd, _ := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(pwd)

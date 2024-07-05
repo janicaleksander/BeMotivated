@@ -11,7 +11,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	server := api.BuildServer(":8080", db)
+
+	server := api.BuildServer(":5050", db)
 	db.Init()
 	server.Run()
 

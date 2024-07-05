@@ -10,6 +10,7 @@ const (
 	JWT      = "JWT token problem"
 	AUTH     = "Not authorized"
 	VALID    = "Token not valid"
+	LOGGED   = "You are already loged in "
 )
 
 type Error struct {
