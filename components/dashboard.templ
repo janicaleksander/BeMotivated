@@ -20,6 +20,8 @@ templ Main(slice []types.Task) {
         <label for="task">Task:</label>
         <input type="text" id="task" name="task" required ><br>
         <button type="submit" value="Submit">Submit</button>
+        <input type="date" id="date" name="date" required>
+
     </form>
 
 </div>
@@ -36,7 +38,6 @@ templ Task(t types.Task) {
 <form hx-delete="/api/delete-task" hx-target="this">
     <button  type="submit" class="items-end" value={strconv.Itoa(t.ItemID)} name="delete">DELETE</button>
     <p>{ t.Description }</p>
-
 </form>
 <br>
 </div>

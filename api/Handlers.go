@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -190,10 +191,35 @@ func (s *APIServer) handleAddTask(w http.ResponseWriter, r *http.Request) error 
 		return err // error in template in the future
 	}
 	desc := r.PostFormValue("task")
+	dtable := strings.Split(r.PostFormValue("date"), "-")
+
+	year := dtable[0]
+	yearInt, err := strconv.Atoi(year)
+	var monthInt int
+	var dayInt int
+	month := dtable[1]
+	m := strings.Split(month, "0")
+	if len(m) == 2 {
+		monthInt, err = strconv.Atoi(m[1])
+	} else {
+		monthInt, err = strconv.Atoi(m[0])
+	}
+
+	day := dtable[2]
+	d := strings.Split(day, "0")
+	if len(d) == 2 {
+		dayInt, err = strconv.Atoi(d[1])
+	} else {
+		dayInt, err = strconv.Atoi(d[0])
+	}
+
+	fmt.Println(yearInt, monthInt, dayInt)
+
 	task := &types.Task{
 		UserID:      id,
 		Description: desc,
 		CreatedAt:   time.Now(),
+		Date:        time.Date(yearInt, time.Month(monthInt), dayInt, 0, 0, 0, 0, time.UTC),
 	}
 
 	err = s.Store.CreateTask(task)
@@ -208,6 +234,15 @@ func (s *APIServer) handleAddTask(w http.ResponseWriter, r *http.Request) error 
 		fmt.Println(err)
 		return err
 	}
+
+	slice, err := s.Store.GetTaskByDate(id, time.Date(2024, time.Month(7), 25, 0, 0, 0, 0, time.UTC))
+	if err != nil {
+		return err
+	}
+	for _, value := range slice {
+		fmt.Println(value)
+	}
+
 	return Render(w, r, components.Task(*task))
 
 }
@@ -222,7 +257,6 @@ func (s *APIServer) handleDeleteTask(w http.ResponseWriter, r *http.Request) err
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -233,5 +267,33 @@ func (s *APIServer) handleTestDashboard(w http.ResponseWriter, r *http.Request) 
 	return Render(w, r, components.DashboardProduction())
 }
 func (s *APIServer) handleTestTasks(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
+func (s *APIServer) handleGetTask(w http.ResponseWriter, r *http.Request) error {
+	id, err := s.getID(r)
+	if err != nil {
+		return err
+	}
+	data := r.FormValue("show")
+
+	dtable := strings.Split(data, ",")
+	year := dtable[0]
+	yearInt, err := strconv.Atoi(year)
+
+	month := dtable[1]
+	monthInt, err := strconv.Atoi(month)
+
+	day := dtable[2]
+	dayInt, err := strconv.Atoi(day)
+
+	date := time.Date(yearInt, time.Month(monthInt), dayInt, 0, 0, 0, 0, time.UTC)
+
+	sl, err := s.Store.GetTaskByDate(id, date)
+	if err != nil {
+		return err
+	}
+	fmt.Print(sl)
+
 	return nil
 }

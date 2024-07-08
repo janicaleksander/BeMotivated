@@ -8,6 +8,7 @@ import (
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
 	"log"
+	"time"
 )
 
 const (
@@ -26,6 +27,7 @@ type Storage interface {
 	CreateTask(task *types.Task) error
 	GetTask(id int) ([]types.Task, error)
 	DeleteTask(itemID int) error
+	GetTaskByDate(id int, date time.Time) ([]types.Task, error)
 }
 
 type Postgres struct {
@@ -55,7 +57,8 @@ func (s *Postgres) createTaskTable() error {
         user_id  int,
         item_id SERIAL PRIMARY KEY,
         description VARCHAR(255),
-        created_at TIMESTAMP
+        created_at TIMESTAMP,
+        date_day DATE
     )`
 	_, err := s.db.Exec(query)
 	fmt.Println(err)
@@ -144,9 +147,9 @@ func (s *Postgres) GetAccount(email, pwd string) (*types.Account, error) {
 }
 
 func (s *Postgres) CreateTask(task *types.Task) error {
-	query := `INSERT INTO task (user_id, description, created_at) VALUES ($1, $2, $3) RETURNING item_id`
+	query := `INSERT INTO task (user_id, description, created_at,date_day) VALUES ($1, $2, $3,$4) RETURNING item_id`
 	var id int
-	err := s.db.QueryRow(query, task.UserID, task.Description, task.CreatedAt).Scan(&id)
+	err := s.db.QueryRow(query, task.UserID, task.Description, task.CreatedAt, task.Date).Scan(&id)
 	if err != nil {
 		return err
 	}
@@ -157,6 +160,23 @@ func (s *Postgres) CreateTask(task *types.Task) error {
 func (s *Postgres) GetTask(id int) ([]types.Task, error) {
 	query := `SELECT * FROM task WHERE user_id=$1`
 	row, err := s.db.Query(query, id)
+	if err != nil {
+		return nil, err
+	}
+	var slice []types.Task
+
+	for row.Next() {
+		task, err := scanIntoTask(row)
+		if err != nil {
+			return nil, err
+		}
+		slice = append(slice, *task)
+	}
+	return slice, nil
+}
+func (s *Postgres) GetTaskByDate(id int, date time.Time) ([]types.Task, error) {
+	query := `SELECT * FROM task WHERE user_id=$1 AND date_day=$2`
+	row, err := s.db.Query(query, id, date)
 	if err != nil {
 		return nil, err
 	}
@@ -199,6 +219,7 @@ func scanIntoTask(row *sql.Rows) (*types.Task, error) {
 		&task.UserID,
 		&task.ItemID,
 		&task.Description,
-		&task.CreatedAt)
+		&task.CreatedAt,
+		&task.Date)
 	return task, err
 }

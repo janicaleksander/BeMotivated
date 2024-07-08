@@ -9,14 +9,5 @@ type Task struct {
 	ItemID      int       `json:"task-id"`
 	Description string    `json:"description"`
 	CreatedAt   time.Time `json:"created_at"`
-	Bool        bool
-}
-
-func NewTask(userID, itemID int, desc string) *Task {
-	return &Task{
-		UserID:      userID,
-		ItemID:      itemID,
-		Description: desc,
-		CreatedAt:   time.Now(),
-	}
+	Date        time.Time `json:"date"`
 }

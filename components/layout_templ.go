@@ -26,7 +26,7 @@ func Layout(children ...templ.Component) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 1)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Dashboard</title><link href=\"/static/css/tailwind.css\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@2.0.0\"></script></head><body><div><ul class=\"flex border-b\"><li class=\"-mb-px mr-1\"><a class=\"bg-white inline-block border-l border-t border-r rounded-t py-2 px-4 text-blue-700 font-semibold\" href=\"#\">Active</a></li><li class=\"mr-1\"><a class=\"bg-white inline-block py-2 px-4 text-blue-500 hover:text-blue-800 font-semibold\" href=\"#\">Tab</a></li><li class=\"mr-1\"><a class=\"bg-white inline-block py-2 px-4 text-blue-500 hover:text-blue-800 font-semibold\" href=\"#\">Tab</a></li><li class=\"mr-1\"><a class=\"bg-white inline-block py-2 px-4 text-gray-400 font-semibold\" href=\"#\">Tab</a></li></ul></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -36,7 +36,7 @@ func Layout(children ...templ.Component) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 2)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
