@@ -1,7 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   mode:'jit',
-  content: ["./components/**/*.{go,templ}"],
+  content: [
+      "./components/**/*.{go,templ}",
+      "./node_modules/flowbite/**/*.js"
+
+  ],
   theme: {
     extend: {
       colors:{
@@ -15,5 +19,8 @@ module.exports = {
   },
   plugins: [
     require('@tailwindcss/forms'),
+    require('flowbite/plugin')({
+      charts: true,
+    }),
   ],
 }

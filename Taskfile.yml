@@ -9,7 +9,7 @@ tasks:
 
   templ:
     cmds:
-      - templ generate -watch -proxy=http://localhost:5050
+      - TEMPL_EXPERIMENT=rawgo templ generate -watch -proxy=http://localhost:5050
   tailwind:
     cmds:
       -  npx tailwindcss build -i ./static/css/style.css -o ./static/css/tailwind.css --watch

@@ -1,12 +1,17 @@
 package components
 
+import "github.com/janicaleksander/BeMotivated/types"
+
+
 templ DashboardProduction(){
-@Base(MainDashboard())
+@Base(Calendar())
 }
 
-templ MainDashboard(){
+
+templ Calendar(){
 <head>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
     <style>
         @import url(https://fonts.googleapis.com/css?family=Poppins:100,100italic,200,200italic,300,300italic,regular,italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic);
         :root {
@@ -133,9 +138,10 @@ templ MainDashboard(){
         }
 
     </style>
-
 </head>
+
 <body>
+
 <div class="container">
     <div class="calendar">
         <div class="header">
@@ -169,13 +175,21 @@ templ MainDashboard(){
         </div>
         <br>
         <div id="calendar-task">
-        <p>XDD</p>
+        </div>
+
+        <div id="chart" >
+            <form hx-post="/api/test/chart" hx-target="#chart" id="myform">
+
+
+            </form>
         </div>
 
     </div>
 </div>
 
 <script>
+
+
 
     function getDayOfWeekIndex(date, month, year) {
         const dateObj = new Date(year, month - 1, date);
@@ -255,16 +269,15 @@ templ MainDashboard(){
                 currentMonth === new Date().getMonth() &&
                 currentYear === new Date().getFullYear()
             ) {
-                days += `<button hx-post="/api/get-task" hx-target="#calendar-task" hx-swap="beforeend"  class="day today" name="show" value="${currentYear},${currentMonth+1},${i}">${i}</button>`;
+                days += `<button  hx-post="/api/get-task" hx-target="#calendar-task" hx-swap="innerHTML"  class="day today" name="show" value="${currentYear},${currentMonth+1},${i}">${i}</button>`;
 
             } else {
-                days += `<button class="day">${i}</button>`;
-                console.log(i)
+                days += `<button hx-post="/api/get-task" hx-target="#calendar-task" hx-swap="innerHTML"  class="day " name="show" value="${currentYear},${currentMonth+1},${i}">${i}</button>`;
             }
         }
 
         for (let j = 1; j <= nextDays+1; j++) {
-            days += `<button class="day next">${j}</button>`;
+            days += `<button  hx-post="/api/get-task" hx-target="#calendar-task" hx-swap="innerHTML"  class="day" name="show" value="${currentYear},${currentMonth+1},${j}">${j}</button>`;
 
         }
 
@@ -313,6 +326,99 @@ templ MainDashboard(){
         alert(event + ' clicked');
     }
 
+
 </script>
+
 </body>
+}
+
+
+templ DayTaskSlice(t []types.Task) {
+<div >
+    <form class="bg-red-200">
+        for _, item := range t{
+        <p>{item.Description}</p>
+        }
+    </form>
+
+</div>
+}
+
+templ Chart(){
+<div class="py-6" id="pie-chart"></div>
+
+<script>
+
+    const getChartOptions = () => {
+        return {
+            series: [52.8, 26.8, 20.4],
+            colors: ["#1C64F2", "#16BDCA", "#9061F9"],
+            chart: {
+                height: 420,
+                width: "100%",
+                type: "pie",
+            },
+            stroke: {
+                colors: ["white"],
+                lineCap: "",
+            },
+            plotOptions: {
+                pie: {
+                    labels: {
+                        show: true,
+                    },
+                    size: "100%",
+                    dataLabels: {
+                        offset: -25
+                    }
+                },
+            },
+            labels: ["Direct", "Organic search", "Referrals"],
+            dataLabels: {
+                enabled: true,
+                style: {
+                    fontFamily: "Inter, sans-serif",
+                },
+            },
+            legend: {
+                position: "bottom",
+                fontFamily: "Inter, sans-serif",
+            },
+            yaxis: {
+                labels: {
+                    formatter: function (value) {
+                        return value + "%"
+                    },
+                },
+            },
+            xaxis: {
+                labels: {
+                    formatter: function (value) {
+                        return value  + "%"
+                    },
+                },
+                axisTicks: {
+                    show: false,
+                },
+                axisBorder: {
+                    show: false,
+                },
+            },
+        }
+    }
+
+    if (document.getElementById("pie-chart") && typeof ApexCharts !== 'undefined') {
+        const chart = new ApexCharts(document.getElementById("pie-chart"), getChartOptions());
+        chart.render();
+    }
+
+
+</script>
+}
+
+templ ChartData(values ...string){
+    for _,value := range values{
+        <p>{value}</p>
+    }
+
 }

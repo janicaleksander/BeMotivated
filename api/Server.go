@@ -47,10 +47,11 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/api/add-task", prepareHandle(s.handleAddTask))
 	router.HandleFunc("/api/delete-task", prepareHandle(s.handleDeleteTask))
 
-	router.HandleFunc("/api/test", prepareHandle(s.handleTest))
 	router.HandleFunc("/api/test/dashboard", prepareHandle(s.handleTestDashboard))
 	router.HandleFunc("/api/test/tasks", prepareHandle(s.handleTestTasks))
 	router.HandleFunc("/api/get-task", prepareHandle(s.handleGetTask))
+
+	router.HandleFunc("/api/test/chart", prepareHandle(s.TestChart))
 
 	log.Println("Running on: ", s.ListenAddress)
 	log.Fatal(http.ListenAndServe(s.ListenAddress, router))

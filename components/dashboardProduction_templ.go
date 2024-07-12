@@ -8,6 +8,8 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import "github.com/janicaleksander/BeMotivated/types"
+
 func DashboardProduction() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -26,7 +28,7 @@ func DashboardProduction() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Base(MainDashboard()).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Base(Calendar()).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -34,7 +36,7 @@ func DashboardProduction() templ.Component {
 	})
 }
 
-func MainDashboard() templ.Component {
+func Calendar() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -52,9 +54,125 @@ func MainDashboard() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<head><link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0\"><style>\r\n        @import url(https://fonts.googleapis.com/css?family=Poppins:100,100italic,200,200italic,300,300italic,regular,italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic);\r\n        :root {\r\n            --primary-color: #ff0000;\r\n            --text-color: #1d1d1d;\r\n            --bg-color:#ffffff;\r\n        }\r\n        * {\r\n            margin: 0;\r\n            padding: 0;\r\n            box-sizing: border-box;\r\n\r\n        }\r\n        body {\r\n            background: #ffffff;\r\n        }\r\n        .container {\r\n            width: 100%;\r\n            min-height: 100vh;\r\n            display: flex;\r\n            align-items: center;\r\n            justify-content: center;\r\n            margin: -100px auto;\r\n\r\n\r\n        }\r\n        .calendar {\r\n            width: 100%;\r\n            max-width: 500px;\r\n            background: var(--bg-color);\r\n            padding: 30px 20px;\r\n            border-radius: 10px;\r\n\r\n        }\r\n        .calendar .header {\r\n            display: flex;\r\n            justify-content: space-between;\r\n            align-items: center;\r\n            margin-bottom: 20px;\r\n            padding-bottom: 20px;\r\n            border-bottom: 2px solid #ccc;\r\n        }\r\n        .calendar .header .month {\r\n            display: flex;\r\n            align-items: center;\r\n            font-size: 25px;\r\n            font-weight: 600;\r\n            color: var(--text-color);\r\n        }\r\n        .calendar .header .btns {\r\n            display: flex;\r\n            gap: 10px;\r\n        }\r\n        .calendar .header .btns .btn {\r\n            width: 50px;\r\n            height: 40px;\r\n            background: var(--primary-color);\r\n            display: flex;\r\n            justify-content: center;\r\n            align-items: center;\r\n            border-radius: 5px;\r\n            color: #fff;\r\n            font-size: 16px;\r\n            cursor: pointer;\r\n            transition: all 0.3s;\r\n        }\r\n        .calendar .header .btns .btn:hover {\r\n            background: #db0933;\r\n            transform: scale(1.05);\r\n        }\r\n        .calendar .weekdays {\r\n            display: flex;\r\n            gap: 10px;\r\n            margin-bottom: 10px;\r\n        }\r\n        .calendar .weekdays .day {\r\n            width: calc(100% / 7 - 10px);\r\n            text-align: center;\r\n            font-size: 16px;\r\n            font-weight: 600;\r\n        }\r\n        .calendar .days {\r\n            display: flex;\r\n            flex-wrap: wrap;\r\n            gap: 10px;\r\n        }\r\n        .calendar .days .day {\r\n            width: calc(100% / 7 - 10px);\r\n            height: 50px;\r\n            background: #fff;\r\n            display: flex;\r\n            justify-content: center;\r\n            align-items: center;\r\n            border-radius: 5px;\r\n            font-size: 16px;\r\n            font-weight: 400;\r\n            color: var(--text-color);\r\n            transition: all 0.3s;\r\n            user-select: none;\r\n        }\r\n        .calendar .days .day:not(.next):not(.prev):hover {\r\n            color: #fff;\r\n            background: var(--primary-color);\r\n            transform: scale(1.05);\r\n        }\r\n        .calendar .days .day.next,\r\n        .calendar .days .day.prev {\r\n            color: #ccc;\r\n        }\r\n        .calendar .days .day.today {\r\n            color: #fff;\r\n            background: var(--primary-color);\r\n        }\r\n        .credits a {\r\n            position: absolute;\r\n            bottom: 10px;\r\n            left: 50%;\r\n            transform: translateX(-50%);\r\n            font-size: 14px;\r\n            color: #aaa;\r\n        }\r\n        .credits span {\r\n            color: var(--primary-color);\r\n        }\r\n\r\n    </style></head><body><div class=\"container\"><div class=\"calendar\"><div class=\"header\"><div class=\"month\"></div><div class=\"btns\"><!-- today --><div class=\"btn today\"><span class=\"material-symbols-outlined\">today</span></div><!-- previous month --><div class=\"btn prev\"><span class=\"material-symbols-outlined\">chevron_left</span></div><!-- next month --><div class=\"btn next\"><span class=\"material-symbols-outlined\">chevron_right</span></div></div></div><div class=\"weekdays\"><div class=\"day\">Mon</div><div class=\"day\">Tue</div><div class=\"day\">Wed</div><div class=\"day\">Thu</div><div class=\"day\">Fri</div><div class=\"day\">Sat</div><div class=\"day\">Sun</div></div><div class=\"days\"><!-- render days with js --></div><br><div id=\"calendar-task\"><p>XDD</p></div></div></div><script>\r\n\r\n    function getDayOfWeekIndex(date, month, year) {\r\n        const dateObj = new Date(year, month - 1, date);\r\n        const dayNumber = dateObj.getDay();\r\n        return dayNumber;\r\n    }\r\n\r\n    const daysContainer = document.querySelector(\".days\");\r\n    const nextBtn = document.querySelector(\".next\");\r\n    const prevBtn = document.querySelector(\".prev\");\r\n    const todayBtn = document.querySelector(\".today\");\r\n    const month = document.querySelector(\".month\");\r\n\r\n    const months = [\r\n        \"January\",\r\n        \"February\",\r\n        \"March\",\r\n        \"April\",\r\n        \"May\",\r\n        \"June\",\r\n        \"July\",\r\n        \"August\",\r\n        \"September\",\r\n        \"October\",\r\n        \"November\",\r\n        \"December\",\r\n    ];\r\n\r\n    const days = [ \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\",\"Sun\"];\r\n\r\n    const date = new Date();\r\n    let currentMonth = date.getMonth();\r\n    let currentYear = date.getFullYear();\r\n\r\n    const renderCalendar = () => {\r\n        date.setDate(1);\r\n        const firstDay = new Date(currentYear, currentMonth, 1); // data pierwszego dnia miesciaca\r\n        const lastDay = new Date(currentYear, currentMonth + 1, 0); // data ostatniego dnia miesciaca\r\n\r\n\r\n        const lastDayIndex = lastDay.getDay(); // indeks ostatenigo dnia tygodnie od 0 do 6 0 to niedziela 6 to sobota\r\n        const lastDayDate = lastDay.getDate(); // cyferka ostatniego dnia tygodznia\r\n\r\n\r\n        const prevLastDay = new Date(currentYear, currentMonth, 0); // data ostatniego dnia last miesiaca\r\n        const prevLastDayDate = prevLastDay.getDate(); // cyferka ostatniego dnia last miesiaca\r\n        var nextDays =0;\r\n        if(lastDayIndex===0){\r\n            const nextDays = 0;\r\n        }else{\r\n            nextDays = 7 - lastDayIndex -1;\r\n        }\r\n\r\n        month.innerHTML = `${months[currentMonth]} ${currentYear}`;\r\n\r\n        let days = \"\";\r\n        // firstDay.getDay zwraca indeks pierwszego dnia 0 niedziela 6 sobota\r\n        let k=0;\r\n        if(firstDay.getDay()!==0) {\r\n            for (let x = firstDay.getDay() - 1 ; x > 0; x--) {\r\n                days += `<button class=\"day prev\">${prevLastDayDate - x+1}</button>`;\r\n                k++;\r\n\r\n            }\r\n        }\r\n        k = 6;\r\n        if(firstDay.getDay()===0) {\r\n            for (let x = 6 ; x > 0; x--) {\r\n                days += `<button class=\"day prev\">${prevLastDayDate - k+1}</button>`;\r\n                k--;\r\n            }\r\n        }\r\n\r\n        for (let i = 1; i <= lastDayDate; i++) {\r\n            if (\r\n                i === new Date().getDate() &&\r\n                currentMonth === new Date().getMonth() &&\r\n                currentYear === new Date().getFullYear()\r\n            ) {\r\n                days += `<button hx-post=\"/api/get-task\" hx-target=\"#calendar-task\" hx-swap=\"beforeend\"  class=\"day today\" name=\"show\" value=\"${currentYear},${currentMonth+1},${i}\">${i}</button>`;\r\n\r\n            } else {\r\n                days += `<button class=\"day\">${i}</button>`;\r\n                console.log(i)\r\n            }\r\n        }\r\n\r\n        for (let j = 1; j <= nextDays+1; j++) {\r\n            days += `<button class=\"day next\">${j}</button>`;\r\n\r\n        }\r\n\r\n        daysContainer.innerHTML = days;\r\n        hideTodayBtn();\r\n    };\r\n\r\n    nextBtn.addEventListener(\"click\", () => {\r\n        currentMonth++;\r\n        if (currentMonth > 11) {\r\n            currentMonth = 0;\r\n            currentYear++;\r\n        }\r\n        renderCalendar();\r\n    });\r\n\r\n    prevBtn.addEventListener(\"click\", () => {\r\n        currentMonth--;\r\n        if (currentMonth < 0) {\r\n            currentMonth = 11;\r\n            currentYear--;\r\n        }\r\n        renderCalendar();\r\n    });\r\n\r\n    todayBtn.addEventListener(\"click\", () => {\r\n        currentMonth = date.getMonth();\r\n        currentYear = date.getFullYear();\r\n        renderCalendar();\r\n    });\r\n\r\n    function hideTodayBtn() {\r\n        if (\r\n            currentMonth === new Date().getMonth() &&\r\n            currentYear === new Date().getFullYear()\r\n        ) {\r\n            todayBtn.style.display = \"none\";\r\n        } else {\r\n            todayBtn.style.display = \"flex\";\r\n        }\r\n    }\r\n\r\n    renderCalendar();\r\n\r\n    function handleClick(event) {\r\n        alert(event + ' clicked');\r\n    }\r\n\r\n</script></body>")
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 1)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func DayTaskSlice(t []types.Task) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 2)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, item := range t {
+			templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 3)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(item.Description)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/dashboardProduction.templ`, Line: 340, Col: 28}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 4)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 5)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func Chart() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 6)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func ChartData(values ...string) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		for _, value := range values {
+			templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 7)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var7 string
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(value)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/dashboardProduction.templ`, Line: 421, Col: 17}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 8)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
 		return templ_7745c5c3_Err
 	})

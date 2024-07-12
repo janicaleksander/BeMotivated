@@ -28,6 +28,7 @@ type Storage interface {
 	GetTask(id int) ([]types.Task, error)
 	DeleteTask(itemID int) error
 	GetTaskByDate(id int, date time.Time) ([]types.Task, error)
+	TestChart(id int) error
 }
 
 type Postgres struct {
@@ -201,6 +202,20 @@ func (s *Postgres) DeleteTask(itemID int) error {
 	}
 	return nil
 
+}
+
+func (s *Postgres) TestChart(id int) error {
+	query := `SELECT value FROM temp WHERE id=$1`
+	rows, err := s.db.Query(query, id)
+	if err != nil {
+		return err
+	}
+	var value int
+	for rows.Next() {
+		rows.Scan(&value)
+	}
+	fmt.Println(value)
+	return nil
 }
 func scanIntoAccount(row *sql.Rows) (*types.Account, error) {
 	account := new(types.Account)

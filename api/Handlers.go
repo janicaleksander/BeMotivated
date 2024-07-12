@@ -260,12 +260,6 @@ func (s *APIServer) handleDeleteTask(w http.ResponseWriter, r *http.Request) err
 	return nil
 }
 
-func (s *APIServer) handleTest(w http.ResponseWriter, r *http.Request) error {
-	return Render(w, r, components.Base())
-}
-func (s *APIServer) handleTestDashboard(w http.ResponseWriter, r *http.Request) error {
-	return Render(w, r, components.DashboardProduction())
-}
 func (s *APIServer) handleTestTasks(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
@@ -295,5 +289,18 @@ func (s *APIServer) handleGetTask(w http.ResponseWriter, r *http.Request) error 
 	}
 	fmt.Print(sl)
 
+	Render(w, r, components.DayTaskSlice(sl))
+
+	return nil
+}
+
+func (s *APIServer) handleTestDashboard(w http.ResponseWriter, r *http.Request) error {
+
+	Render(w, r, components.DashboardProduction())
+	return nil
+
+}
+func (s *APIServer) TestChart(w http.ResponseWriter, r *http.Request) error {
+	Render(w, r, components.Chart())
 	return nil
 }
