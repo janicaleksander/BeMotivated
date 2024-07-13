@@ -51,7 +51,7 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/api/test/tasks", prepareHandle(s.handleTestTasks))
 	router.HandleFunc("/api/get-task", prepareHandle(s.handleGetTask))
 
-	router.HandleFunc("/api/test/chart", prepareHandle(s.TestChart))
+	router.HandleFunc("/api/test/chart-1", prepareHandle(s.TestChart))
 
 	log.Println("Running on: ", s.ListenAddress)
 	log.Fatal(http.ListenAndServe(s.ListenAddress, router))

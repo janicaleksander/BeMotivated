@@ -297,10 +297,11 @@ func (s *APIServer) handleGetTask(w http.ResponseWriter, r *http.Request) error 
 func (s *APIServer) handleTestDashboard(w http.ResponseWriter, r *http.Request) error {
 
 	Render(w, r, components.DashboardProduction())
+
 	return nil
 
 }
 func (s *APIServer) TestChart(w http.ResponseWriter, r *http.Request) error {
-	Render(w, r, components.Chart())
-	return nil
+	val := []int{43, 37, 20}
+	return json.NewEncoder(w).Encode(val)
 }
