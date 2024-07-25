@@ -11,6 +11,8 @@ templ Base(children ...templ.Component) {
     <script src="https://unpkg.com/htmx.org@2.0.0"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <link href="https://cdn.jsdelivr.net/npm/pagedone@1.1.2/src/css/pagedone.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css" rel="stylesheet" />
 
 
 
@@ -38,15 +40,16 @@ templ Base(children ...templ.Component) {
 
 </head>
 <body  class="font-roboto text-xl" >
+
 <div id="nav-container" class="drop-shadow-md border-b border-shadow bg-white-900 m-0 p-0">
     <header class="box-border justify-between flex items-center">
         <nav class="w-full">
             <ul class="flex justify-between items-center p-3">
                 <li class="inline-block p-4"><a href="#">HOME</a></li>
                 <div class="flex">
-                    <li id="dash_under"  class="inline-block p-4"><a href="/api/dashboard"  class="decoration-solid">DASHBOARD</a></li>
-                    <li id="tasks_under" class="inline-block p-4"><a href="#">TASKS</a></li>
-                    <li id="pomodoro_under" class="inline-block p-4"><a href="#">POMODORO</a></li>
+                    <li id="dash_under"  class="inline-block p-4"><a href="/api/test/dashboard"  class="decoration-solid">DASHBOARD</a></li>
+                    <li id="tasks_under" class="inline-block p-4"><a href="/api/task">TASKS/missmycafe/projects</a></li>
+                    <li id="pomodoro_under" class="inline-block p-4"><a href="/api/pomodoro">POMODORO</a></li>
                 </div>
                 <li class="inline-block p-4"><a href="#">PROFILE</a></li>
             </ul>
@@ -67,10 +70,10 @@ for _, child := range children {
         if (currentPage === "/api/test/dashboard") {
             bodyClass = "dashboard";
         }
-        if (currentPage === "/api/test/tasks") {
+        if (currentPage === "/api/task") {
             bodyClass = "tasks";
         }
-        if (currentPage === "/api/test/pomodoro") {
+        if (currentPage === "/api/pomodoro") {
             bodyClass = "pomodoro";
         }
         if (bodyClass) {
@@ -78,6 +81,8 @@ for _, child := range children {
         }
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
+
 </body>
 </html>
 

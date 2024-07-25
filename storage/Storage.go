@@ -29,14 +29,17 @@ type Storage interface {
 	DeleteTask(itemID int) error
 	GetTaskByDate(id int, date time.Time) ([]types.Task, error)
 	TestChart(id int) error
+	IncreasePomodoro(id int) error
+	CountDailyStreak(id int) ([]int, error)
+	CountCategory(id int) []int
 }
 
 type Postgres struct {
 	db *sql.DB
 }
 
-func (s *Postgres) Init() (error, error) {
-	return s.createAccountTable(), s.createTaskTable()
+func (s *Postgres) Init() (error, error, error) {
+	return s.createAccountTable(), s.createTaskTable(), s.createPomodoroTable()
 }
 
 func NewPostgresDB() (*Postgres, error) {
@@ -58,11 +61,11 @@ func (s *Postgres) createTaskTable() error {
         user_id  int,
         item_id SERIAL PRIMARY KEY,
         description VARCHAR(255),
+    	category VARCHAR(255),
         created_at TIMESTAMP,
         date_day DATE
     )`
 	_, err := s.db.Exec(query)
-	fmt.Println(err)
 	return err
 }
 func (s *Postgres) createAccountTable() error {
@@ -148,9 +151,9 @@ func (s *Postgres) GetAccount(email, pwd string) (*types.Account, error) {
 }
 
 func (s *Postgres) CreateTask(task *types.Task) error {
-	query := `INSERT INTO task (user_id, description, created_at,date_day) VALUES ($1, $2, $3,$4) RETURNING item_id`
+	query := `INSERT INTO task (user_id, description, category, created_at,date_day) VALUES ($1, $2, $3,$4,$5) RETURNING item_id`
 	var id int
-	err := s.db.QueryRow(query, task.UserID, task.Description, task.CreatedAt, task.Date).Scan(&id)
+	err := s.db.QueryRow(query, task.UserID, task.Description, task.Category, task.CreatedAt, task.Date).Scan(&id)
 	if err != nil {
 		return err
 	}
@@ -217,6 +220,112 @@ func (s *Postgres) TestChart(id int) error {
 	fmt.Println(value)
 	return nil
 }
+func (s *Postgres) createPomodoroTable() error {
+	query := `CREATE TABLE IF NOT EXISTS pomodoro (
+        user_id  int,
+        created_at TIMESTAMP
+    )`
+	_, err := s.db.Exec(query)
+	return err
+}
+
+func (s *Postgres) IncreasePomodoro(id int) error {
+
+	query := `INSERT INTO pomodoro VALUES ($1,$2)`
+	_, err := s.db.Exec(query, id, time.Now())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Postgres) CountDailyStreak(id int) ([]int, error) {
+	query := `SELECT created_at FROM pomodoro WHERE created_at >= CURRENT_TIMESTAMP - INTERVAL '1 WEEK' AND user_id = $1`
+	rows, err := s.db.Query(query, id)
+	if err != nil {
+		return nil, err
+	}
+
+	var mon int
+	var tue int
+	var wen int
+	var thu int
+	var fri int
+	var sat int
+	var sun int
+
+	for rows.Next() {
+		date, err := scanIntoDate(rows)
+		if err != nil {
+			return nil, err
+		}
+
+		weekday := date.Weekday().String()
+
+		switch weekday {
+		case "Monday":
+			mon++
+		case "Tuesday":
+			tue++
+		case "Wednesday":
+			wen++
+		case "Thursday":
+			thu++
+		case "Friday":
+			fri++
+		case "Saturday":
+			sat++
+		case "Sunday":
+			sun++
+		default:
+			fmt.Println("Nieznany dzień:", weekday)
+		}
+	}
+
+	return []int{mon, tue, wen, thu, fri, sat, sun}, nil
+
+}
+
+func (s *Postgres) CountCategory(id int) []int {
+	query := `SELECT category, COUNT(*) AS count FROM task WHERE category IN ('work', 'play', 'training') AND user_id = $1 GROUP BY category;`
+	rows, err := s.db.Query(query, id)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+
+	}
+	defer rows.Close()
+	var play int
+	var work int
+	var training int
+
+	for rows.Next() {
+		var category string
+		var count int
+		err := rows.Scan(&category, &count)
+		fmt.Println(category)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if category == "work" {
+			work = count
+		}
+		if category == "play" {
+			play = count
+		}
+		if category == "training" {
+			training = count
+		}
+	}
+	return []int{work, play, training}
+}
+
+func scanIntoDate(row *sql.Rows) (time.Time, error) {
+	var d time.Time
+	err := row.Scan(&d)
+	return d, err
+}
 func scanIntoAccount(row *sql.Rows) (*types.Account, error) {
 	account := new(types.Account)
 	err := row.Scan(
@@ -234,6 +343,7 @@ func scanIntoTask(row *sql.Rows) (*types.Task, error) {
 		&task.UserID,
 		&task.ItemID,
 		&task.Description,
+		&task.Category,
 		&task.CreatedAt,
 		&task.Date)
 	return task, err

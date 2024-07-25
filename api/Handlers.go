@@ -185,12 +185,17 @@ func (s *APIServer) handleAddTask(w http.ResponseWriter, r *http.Request) error 
 	if !flag {
 		return WriteToJson(w, http.StatusUnauthorized, types.Error{Error: types.AUTH})
 	}
+	if err := r.ParseForm(); err != nil {
+		fmt.Println(err)
+		http.Error(w, "Failed to parse form", http.StatusBadRequest)
+
+	}
 	id, err := s.getID(r)
 	if err != nil {
 		fmt.Println(err)
 		return err // error in template in the future
 	}
-	desc := r.PostFormValue("task")
+	desc := r.PostFormValue("desc")
 	dtable := strings.Split(r.PostFormValue("date"), "-")
 
 	year := dtable[0]
@@ -214,10 +219,12 @@ func (s *APIServer) handleAddTask(w http.ResponseWriter, r *http.Request) error 
 	}
 
 	fmt.Println(yearInt, monthInt, dayInt)
+	category := r.FormValue("cat")
 
 	task := &types.Task{
 		UserID:      id,
 		Description: desc,
+		Category:    category,
 		CreatedAt:   time.Now(),
 		Date:        time.Date(yearInt, time.Month(monthInt), dayInt, 0, 0, 0, 0, time.UTC),
 	}
@@ -243,7 +250,10 @@ func (s *APIServer) handleAddTask(w http.ResponseWriter, r *http.Request) error 
 		fmt.Println(value)
 	}
 
-	return Render(w, r, components.Task(*task))
+	//return nil
+
+	return Render(w, r, components.TaskInfo(*task))
+	//return Render(w, r, components.Tmp())
 
 }
 
@@ -302,6 +312,70 @@ func (s *APIServer) handleTestDashboard(w http.ResponseWriter, r *http.Request) 
 
 }
 func (s *APIServer) TestChart(w http.ResponseWriter, r *http.Request) error {
-	val := []int{43, 37, 20}
-	return json.NewEncoder(w).Encode(val)
+	id, err := s.getID(r)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	slice := s.Store.CountCategory(id)
+	fmt.Println(slice)
+
+	return json.NewEncoder(w).Encode(slice)
+}
+func (s *APIServer) TestChart3(w http.ResponseWriter, r *http.Request) error {
+	id, err := s.getID(r)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	slice, err := s.Store.CountDailyStreak(id)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	fmt.Println(slice)
+
+	return json.NewEncoder(w).Encode(slice)
+}
+func (s *APIServer) handlePomodoro(w http.ResponseWriter, r *http.Request) error {
+	flag, err := s.IsLogged(r)
+	if err != nil {
+		return WriteToJson(w, http.StatusBadRequest, types.Error{Error: types.UnsOp})
+	}
+	if !flag {
+		return WriteToJson(w, http.StatusBadRequest, types.Error{Error: types.AUTH})
+	}
+	Render(w, r, components.PomodoroProduction())
+	return nil
+}
+func (s *APIServer) handleSetPomodoro(w http.ResponseWriter, r *http.Request) error {
+
+	flag, err := s.IsLogged(r)
+	if err != nil {
+		return WriteToJson(w, http.StatusBadRequest, types.Error{Error: types.UnsOp})
+	}
+	if !flag {
+		return WriteToJson(w, http.StatusBadRequest, types.Error{Error: types.AUTH})
+	}
+	id, err := s.getID(r)
+	if err != nil {
+		return WriteToJson(w, http.StatusBadRequest, types.Error{Error: types.UnsOp})
+	}
+	s.Store.IncreasePomodoro(id)
+
+	return nil
+}
+
+func (s *APIServer) handleTask(w http.ResponseWriter, r *http.Request) error {
+	id, err := s.getID(r)
+	if err != nil {
+		return err
+	}
+	slice, err := s.Store.GetTask(id)
+
+	Render(w, r, components.SendSlice(slice))
+	Render(w, r, components.TasksProduction())
+
+	return nil
+
 }

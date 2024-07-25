@@ -1,0 +1,452 @@
+package components
+
+templ PomodoroProduction(){
+@Base(Clock())
+}
+
+templ Clock(){
+<head>
+<style>
+#box{
+padding-top:150px;
+}
+#countdown {
+    height: 200px;
+    width: 200px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: red;
+    animation: none;
+
+}
+
+
+@keyframes shapeChange {
+    0%, 100% {
+        transform: scale(1);
+        border-radius: 50%;
+         background-color: red;
+    }
+    50% {
+        transform: scale(1.2);
+        border-radius: 30%;
+        background-color: #f0a5a5;
+
+    }
+}
+
+
+@keyframes shapeChange2 {
+    0%, 100% {
+        transform: scale(1);
+        border-radius: 50%;
+         background-color: blue;
+    }
+    50% {
+        transform: scale(1.2);
+        border-radius: 30%;
+        background-color: #f0a5a5;
+
+    }
+}
+
+#short, #long,#start{
+display:none;
+}
+
+#fif,#twe,#thi,#short,#long,#start{
+
+border-color:;
+border-width:1.2px;
+}
+.counter {
+    position: absolute;
+    font-size: 2rem;
+    font-weight: bold;
+    color: black;
+    animation: popUp 2s ease-out forwards;
+}
+
+@keyframes popUp {
+    0% {
+        transform: translateY(0) rotate(var(--angle));
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(-50px) rotate(var(--angle));
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) rotate(var(--angle));
+        opacity: 0;
+    }
+}
+
+</style>
+</head>
+
+<div id="box"class="flex justify-center">
+    <div>
+    <div class="flex flex-col gap-2 items-center justify-between">
+    <div id="countdown" class="flex items-center justify-center transition-all duration-200">
+    </div>
+</div>
+
+
+        <script>
+        var t = 0;
+        var b = 0;
+        function doit(){
+         zm1 = getValueTime();
+         zm2 = getValueBreak()
+         console.log(zm2);
+         switch (zm2){
+            case "short":
+                b = 5;
+                break;
+            case "long":
+                b = 15;
+                break;
+         }
+         t = parseInt(zm1,10);
+         t=0.25;
+         b=0.25;
+         console.log(t);
+         console.log(b)
+        }
+
+        function breakTime(v){
+              var countDownDate = new Date("July 15, 2024 18:55:00").getTime();
+              var now = new Date();
+              var in15Minutes = new Date(now.getTime() + v * 60 * 1000).getTime();
+
+                        var x = setInterval(function() {
+
+                            // Get today's date and time
+                            var now = new Date().getTime();
+
+                            // Find the distance between now and the count down date
+                            var distance = in15Minutes - now;
+
+                            // Time calculations for days, hours, minutes and seconds
+                            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                            // Output the result in an element with id="countdown"
+                            document.getElementById("countdown").innerHTML = minutes + "m " + seconds + "s ";
+
+                            // If the count down is over, write some text
+                            if (distance < 0) {
+                                clearInterval(x);
+                                fetch('/api/set-pomodoro', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    }
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Network response was not ok');
+                                    }
+                                    return "response.json()";
+                                })
+                                .then(data => {
+                                    console.log(data);
+                                })
+                                .catch(error => {
+                                    console.error('There was a problem with the fetch operation:', error);
+                                });
+
+                                document.getElementById("countdown").innerHTML = "NEXT TURN?";
+
+                                animationCounter();
+                                reset();
+                                showTime();
+
+
+
+                            }
+                        }, 1000);
+
+
+        }
+        function showTime(){
+        var shortBtn = document.getElementById("short");
+        var longBtn = document.getElementById("long");
+        var startBtn = document.getElementById("start");
+        shortBtn.style.display = '';
+        longBtn.style.display = '';
+        startBtn.style.display = '';
+
+        }
+
+        function reset(){
+
+         var b1 = document.getElementById('fif');
+         var b2 = document.getElementById('twe');
+         var b3 = document.getElementById('thi');
+         var b4 = document.getElementById('short');
+         var b5 = document.getElementById('long');
+         var b6 = document.getElementById('start');
+         b1.disabled = false;
+         b2.disabled = false;
+         b3.disabled = false;
+         b4.disabled = false;
+         b5.disabled = false;
+         b6.disabled = false;
+         b1.style.borderColor = '';
+         b2.style.borderColor = '';
+         b3.style.borderColor = '';
+         b4.style.borderColor = '';
+         b5.style.borderColor = '';
+         b6.style.borderColor = '';
+
+
+        }
+         function stopStyles(){
+           var countdown = document.getElementById('countdown');
+           countdown.style.animation = '';
+          }
+        function startTimer(){
+             doit();
+
+            // Set the date we're counting down to
+            var countDownDate = new Date("July 15, 2024 18:55:00").getTime();
+            var now = new Date();
+            var in15Minutes = new Date(now.getTime() + t * 60 * 1000).getTime();
+
+
+            var x = setInterval(function() {
+
+                // Get today's date and time
+                var now = new Date().getTime();
+
+                // Find the distance between now and the count down date
+                var distance = in15Minutes - now;
+
+                // Time calculations for days, hours, minutes and seconds
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // Output the result in an element with id="countdown"
+                document.getElementById("countdown").innerHTML = minutes + "m " + seconds + "s ";
+
+                // If the count down is over, write some text
+                if (distance < 0) {
+                    clearInterval(x);
+                    stopStyles();
+                    breakTime(b);
+                }
+            }, 1000);
+            }
+        </script>
+
+    </div>
+</div>
+
+
+<div id="button-box" class=" flex justify-center items-center py-20">
+
+<div class="inline-flex rounded-md shadow-sm" role="group">
+
+  <button id="fif" name="fif" value="15" type="submit" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 hover:text-black-700 focus:z-10 focus:ring-2 focus:ring-red-700 focus:text-black-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-black-500 dark:focus:text-white">
+    15
+  </button>
+  <button id="twe" name="twe" value="25" type="submit" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 hover:text-black-700 focus:z-10 focus:ring-2 focus:ring-red-700 focus:text-black-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-black-500 dark:focus:text-white">
+    25
+  </button>
+  <button id="thi" name="thi" value="35" type="submit" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 hover:text-black-700 focus:z-10 focus:ring-2 focus:ring-red-700 focus:text-black-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-black-500 dark:focus:text-white">
+    35
+  </button>
+
+  <button id="short" name="short" value="short" type="submit" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 hover:text-black-700 focus:z-10 focus:ring-2 focus:ring-red-700 focus:text-black-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-black-500 dark:focus:text-white ">
+       SHORT
+  </button>
+  <button id="long" name="long" value="long" type="submit" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 hover:text-black-700 focus:z-10 focus:ring-2 focus:ring-red-700 focus:text-black-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-black-500 dark:focus:text-white ">
+       LONG
+  </button>
+
+  <button id="start" name="start" value="" type="" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 hover:text-black-700 focus:z-10 focus:ring-2 focus:ring-red-700 focus:text-black-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-black-500 dark:focus:text-white ">
+       START
+  </button>
+
+
+  <div id="animation-counter">
+
+      <div class="counter-container" id="counterContainer"></div>
+
+      <script>
+                let count = 0;
+      function animationCounter(){
+
+                const counterContainer = document.getElementById('counterContainer');
+
+                count++;
+                const counterElement = document.createElement('div');
+                counterElement.textContent = `+${count}`;
+                counterElement.classList.add('counter');
+
+                const randomAngle = (Math.random() * 30 - 15) + 'deg';
+                counterElement.style.setProperty('--angle', randomAngle);
+
+                counterContainer.appendChild(counterElement);
+
+
+
+                counterElement.addEventListener('animationend', () => {
+                    counterContainer.removeChild(counterElement);
+                });
+
+
+      }
+
+
+
+
+      </script>
+
+  </div>
+</div>
+
+
+    <script>
+        // Deklaracja zmiennej globalnej
+        var valueTime = "";
+        var valueBreak = "";
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const fifBtn = document.querySelector('#fif');
+            const tweBtn = document.querySelector('#twe');
+            const thiBtn = document.querySelector('#thi');
+
+            const shortBtn = document.querySelector('#short');
+            const longBtn = document.querySelector('#long');
+
+            const startBtn = document.querySelector('#start');
+
+            function unhideButtons() {
+                shortBtn.style.display = 'inline-block';
+                longBtn.style.display = 'inline-block';
+            }
+
+            function unhideStart(){
+                startBtn.style.display = 'inline-block';
+            }
+
+            function changeStyles() {
+                var countdown = document.getElementById('countdown');
+                countdown.style.animation = 'shapeChange 10s infinite';
+            }
+
+            function border1() {
+            valueTime = document.getElementById('fif').value;
+                var border = document.getElementById('fif');
+                border.style.borderColor = 'red';
+            }
+
+            function border2() {
+            valueTime = document.getElementById('twe').value;
+                var border = document.getElementById('twe');
+                border.style.borderColor = 'red';
+            }
+
+            function border3() {
+            valueTime = document.getElementById('thi').value;
+                var border = document.getElementById('thi');
+                border.style.borderColor = 'red';
+            }
+
+            function border4() {
+                valueBreak = document.getElementById('short').value;
+                var border = document.getElementById('short');
+                border.style.borderColor = 'red';
+            }
+
+            function border5() {
+                valueBreak = document.getElementById('long').value;
+                var border = document.getElementById('long');
+                border.style.borderColor = 'red';
+            }
+
+            function border6() {
+                var border = document.getElementById('start');
+                border.style.borderColor = 'red';
+            }
+
+            function block23() {
+                var b1 = document.getElementById('twe');
+                var b2 = document.getElementById('thi');
+                b1.disabled = true;
+                b2.disabled = true;
+            }
+
+            function block13() {
+                var b1 = document.getElementById('fif');
+                var b2 = document.getElementById('thi');
+                b1.disabled = true;
+                b2.disabled = true;
+            }
+
+            function block12() {
+                var b1 = document.getElementById('fif');
+                var b2 = document.getElementById('twe');
+                b1.disabled = true;
+                b2.disabled = true;
+            }
+            function blockStart(){
+            var b1 = document.getElementById('start');
+            b1.disabled = true;
+            }
+
+            fifBtn.addEventListener('click', unhideButtons);
+            fifBtn.addEventListener('click', block23);
+            tweBtn.addEventListener('click', unhideButtons);
+            tweBtn.addEventListener('click', block13);
+            thiBtn.addEventListener('click', unhideButtons);
+            thiBtn.addEventListener('click', block12);
+
+            fifBtn.addEventListener('click', border1);
+            tweBtn.addEventListener('click', border2);
+            thiBtn.addEventListener('click', border3);
+
+            function blockL() {
+                var b1 = document.getElementById('long');
+                b1.disabled = true;
+            }
+
+            function blockS() {
+                var b1 = document.getElementById('short');
+                b1.disabled = true;
+            }
+
+            shortBtn.addEventListener('click', unhideStart);
+            shortBtn.addEventListener('click', blockL);
+            longBtn.addEventListener('click', unhideStart);
+            longBtn.addEventListener('click', blockS);
+
+            shortBtn.addEventListener('click', border4);
+            longBtn.addEventListener('click', border5);
+
+            startBtn.addEventListener('click', startTimer);
+            startBtn.addEventListener('click', changeStyles);
+
+            startBtn.addEventListener('click', border6);
+            startBtn.addEventListener('click', blockStart);
+
+        });
+
+        function getValueTime(){
+            return valueTime;
+        }
+
+        function getValueBreak(){
+            return valueBreak;
+        }
+
+
+    </script>
+</div>
+
+}

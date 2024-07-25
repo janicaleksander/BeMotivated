@@ -1,0 +1,270 @@
+package components
+import "github.com/janicaleksander/BeMotivated/types"
+import "strconv"
+import "time"
+var todaySlice []types.Task
+var s string
+templ TasksProduction(){
+@Base(TaskField())
+
+}
+
+templ TaskField(){
+<head>
+<style>
+  .input {
+    resize: none;
+    width: 60%;
+    height: 50px;
+    display: block;
+    margin-right: auto;
+    background-color: #05060f0a;
+    border-radius: .5rem;
+    padding: 0 1rem;
+    border: 2px solid transparent;
+    border-color: red;
+    font-size: 1rem;
+    transition: border-color .3s cubic-bezier(.25,.01,.25,1) 0s, color .3s cubic-bezier(.25,.01,.25,1) 0s, background .2s cubic-bezier(.25,.01,.25,1) 0s;
+  }
+
+  .input:hover, .input:focus, .input-group:hover .input {
+    outline: none;
+    border-color: #ffb2b2;
+  }
+
+  .input-group:hover .label, .input:focus {
+    color: #05060fc2;
+  }
+
+  #operation-box {
+    padding-top: 50px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .operation-item {
+    margin: 0;
+  }
+  #date{
+  border-color:red;
+
+  }
+  #date:hover{
+
+  border-color:red;
+  }
+          #task-display {
+          width:100%;
+          padding-top:80px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+          }
+
+          .box1 {
+              width: 100%;  /* Szerokość prostokątów */
+              height: 100%;  /* Wysokość prostokątów */
+              margin: 20px 0;  /* Odstęp między prostokątami */
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              font-size: 20px; /* Rozmiar czcionki */
+              border-radius: 10px; /* Zaokrąglone rogi */
+          }
+          .box1,.box2,.box3{
+              overflow-y: auto; /* Dodaje przewijanie w pionie, jeśli zawartość nie mieści się */
+              border: 1px solid #000; /* Opcjonalne: Dodanie ramki dla kontenera */
+              padding: 10px; /* Opcjonalne: Dodanie wewnętrznych odstępów */
+              box-sizing: border-box; /* Uwzględnia padding i border w wymiarach */
+              flex-direction:column;
+          }
+          .task {
+          color:white;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            background-color:#D37676;
+          }
+
+          #delete-btn {
+            background-color: red; /* Light red for example */
+            color:white;
+            border: none;
+            padding: 5px 10px;
+            margin-right:40px;
+            cursor: pointer;
+            border-radius:10%;
+          }
+          #exp{
+          padding:5px 5px;
+          margin-left:40px;
+          background-color:white;
+          color:black;
+          border-radius:2%;
+
+          }
+
+
+
+
+
+
+
+
+
+</style>
+
+</head>
+
+<form hx-post="/api/add-task" hx-target="#td" hx-swap="afterbegin">
+<div id="operation-box">
+<input autocomplete="off" name="desc" id="desc" class="input" type="text" required>
+<input type="date" id="date" name="date" required>
+
+
+
+
+<button id="dropdownRadioButton" data-dropdown-toggle="dropdownDefaultRadio" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" type="button">CATEGORY <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+</svg>
+</button>
+
+<!-- Dropdown menu -->
+<div id="dropdownDefaultRadio" class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
+    <ul class="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownRadioButton">
+      <li>
+        <div class="flex items-center">
+            <input id="default-radio-1" type="radio" value="work" name="cat" class="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500 dark:focus:ring-red-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+            <label for="default-radio-1" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">WORK</label>
+        </div>
+      </li>
+      <li>
+        <div class="flex items-center">
+            <input checked id="default-radio-2" type="radio" value="play" name="cat" class="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500 dark:focus:ring-red-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+            <label for="default-radio-2" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">PLAY</label>
+        </div>
+      </li>
+      <li>
+        <div class="flex items-center">
+            <input id="default-radio-3" type="radio" value="training" name="cat" class="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500 dark:focus:ring-red-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+            <label for="default-radio-3" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">TRAINING</label>
+        </div>
+      </li>
+    </ul>
+</div>
+
+<button type="submit" class="bg-transparent hover:bg-red-500 text-red-700 font-bold hover:text-white py-2 px-4 border border-gray-300 hover:border-transparent rounded">
+  SUBMIT
+</button>
+
+
+
+</div>
+</form>
+
+<div id="task-display" >
+
+<p>ALL TASKS</p>
+<div class="box1" id="td">
+
+for _, value := range todaySlice {
+@TaskInfo(value)
+}
+</div>
+
+
+</div>
+
+
+}
+
+templ SendSlice(slice []types.Task){
+
+
+{{
+
+todaySlice = slice
+
+
+}}
+
+
+
+}
+
+
+
+templ TaskInfo(t types.Task){
+<form hx-delete="/api/delete-task" hx-target="this">
+    <div class="task">
+    <button  id="delete-btn" type="submit" class="items-end" value={strconv.Itoa(t.ItemID)} name="delete">DELETE</button>
+    <p>{ t.Description }</p>
+    {{
+    var sign string
+    date1 :=time.Now()
+    date2 :=t.Date
+
+   year1, month1, day1 := date1.Date()
+   year2, month2, day2 := date2.Date()
+   date1 = time.Date(year1, month1, day1, 0, 0, 0, 0, time.UTC)
+   date2 = time.Date(year2, month2, day2, 0, 0, 0, 0, time.UTC)
+diff := date2.Sub(date1).Hours() / 24
+date2Str := date2.Format("2006-01-02")
+
+
+	if diff == 0 {
+		sign = "TODAY"
+	} else if diff == 1 {
+		sign = "TOMORROW"
+	} else if diff > 1 && diff <= 3 {
+		sign = "WITHIN 3 DAYS"
+	} else if diff == -1 {
+		sign = "YESTERDAY"
+	} else if diff < -1 && diff >= -3 {
+		sign = "WITHIN 3 DAYS AGO"
+	} else {
+		sign = date2Str
+	}
+
+
+
+
+    }}
+    <div id="exp">{sign}</div>
+    </div>
+</form>
+
+
+}
+
+
+templ Tmp(){
+
+<p>xd</p>
+}
+
+templ SendHxTarget(id string){
+{{
+
+s=id
+
+}}
+
+}
+
+func chooseBox() string {
+
+    switch s {
+        case "td":
+            return "#td"
+        case "tm":
+            return "#tm"
+        default:
+            return "#kurwa"
+    }
+
+
+}

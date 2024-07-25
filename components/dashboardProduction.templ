@@ -337,6 +337,7 @@ templ Calendar(){
     }
 
 
+
 </script>
 
 </body>
@@ -358,21 +359,22 @@ templ ChartBox(){
 
 <style>
  #c-box {
-            display: flex;
-            justify-content: space-between;
-        }
- #c-1, #c-2 {
-                    flex: 1;
-                    margin-right: 10px;
-                    padding: 10px;
-                    border: 1px solid #ccc;
-                    box-sizing: border-box;
+   display: flex;
+   justify-content: space-between;
+ }
+ #c-1, #c-2,#c-3{
+   flex: 1;
+   margin-right: 10px;
+   padding: 10px;
+   border: 1px solid #ccc;
+   box-sizing: border-box;
   }
 </style>
 </head>
 <div id="c-box">
 @Chart1()
-@Chart2()
+
+@Chart3()
 </div>
 
 
@@ -441,7 +443,7 @@ templ Chart1(){
                         }
                     },
                 },
-                labels: ["Direct", "Organic search", "Referrals"],
+                labels: ["Work", "Play", "Training"],
                 dataLabels: {
                     enabled: true,
                     style: {
@@ -515,7 +517,7 @@ templ Chart2(){
         };
 
         const renderChart2 = () => {
-            const chartOptions = getChartOptions();
+            const chartOptions = getChartOptions2();
             const chart = new ApexCharts(document.getElementById("pie-chart2"), chartOptions);
             chart.render();
         };
@@ -582,6 +584,165 @@ templ Chart2(){
         updateChart2();
     </script>
     </div>
+}
+
+
+templ Chart3(){
+<div id="c-3">
+
+<div id="column-chart"></div>
+<script>
+var mon =0;
+var tue =0;
+var wen =0;
+var thu =0;
+var fri=0;
+var sat=0;
+var sun=0;
+        const updateChart3 = () => {
+            let url = "/api/test/chart-3";
+            fetch(url)
+                .then((res) => res.text())
+                .then((response) => {
+                    console.log("Odpowiedź z API:", response);
+
+                    response = response.replace("[", "").replace("]", "");
+                    let stringArray = response.split(',');
+                    let numberArray = stringArray.map(Number);
+                    console.log("Tablica liczb:", numberArray);
+
+                    mon = numberArray[0];
+                    tue = numberArray[1];
+                    wen = numberArray[2];
+                    thu = numberArray[3];
+                    fri = numberArray[4];
+                    sat = numberArray[5];
+                    sun = numberArray[6];
+
+                    console.log("liczba1:", mon);
+                    console.log("liczba2:", tue);
+                    console.log("liczba3:", wen);
+                    console.log("liczba4:", thu);
+                    console.log("liczba5:", fri);
+                    console.log("liczba6:", sat);
+                    console.log("liczba7:", sun);
+
+                    renderChart3();
+                })
+                .catch((error) => alert("Error: " + error));
+        };
+        const renderChart3 = () => {
+                    const chartOptions = getChartOptions3();
+                    const chart = new ApexCharts(document.getElementById("column-chart"), chartOptions);
+                    chart.render();
+        };
+
+
+const getChartOptions3 = () =>{
+return{
+  colors: ["#1A56DB", "#FDBA8C"],
+  series: [
+    {
+      name: "Organic",
+      color: "#ff0000",
+      data: [
+        { x: "Mon", y: mon },
+        { x: "Tue", y: tue },
+        { x: "Wed", y: wen },
+        { x: "Thu", y: thu },
+        { x: "Fri", y: fri },
+        { x: "Sat", y: sat },
+        { x: "Sun", y: sun },
+      ],
+    },
+
+  ],
+  chart: {
+    type: "bar",
+    height: "320px",
+    fontFamily: "Inter, sans-serif",
+    toolbar: {
+      show: false,
+    },
+  },
+  plotOptions: {
+    bar: {
+      horizontal: false,
+      columnWidth: "60%",
+      borderRadiusApplication: "end",
+      borderRadius: 8,
+    },
+  },
+  tooltip: {
+    shared: true,
+    intersect: false,
+    style: {
+      fontFamily: "Inter, sans-serif",
+    },
+  },
+  states: {
+    hover: {
+      filter: {
+        type: "darken",
+        value: 1,
+      },
+    },
+  },
+  stroke: {
+    show: true,
+    width: 0,
+    colors: ["transparent"],
+  },
+  grid: {
+    show: false,
+    strokeDashArray: 4,
+    padding: {
+      left: 2,
+      right: 2,
+      top: -14
+    },
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  legend: {
+    show: false,
+  },
+  xaxis: {
+    floating: false,
+    labels: {
+      show: true,
+      style: {
+        fontFamily: "Inter, sans-serif",
+        cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
+      }
+    },
+    axisBorder: {
+      show: false,
+    },
+    axisTicks: {
+      show: false,
+    },
+  },
+  yaxis: {
+    show: false,
+  },
+  fill: {
+    opacity: 1,
+  },
+  }
+}
+
+
+
+
+updateChart3();
+</script>
+</div>
+
+
+
+
 }
 
 
