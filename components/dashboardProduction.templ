@@ -12,12 +12,12 @@ var icat2 int
 var icat3 int
 
 
-templ DashboardProduction(){
-@Base(Calendar(),ChartBox())
+templ DashboardProduction(s []types.Task){
+@Base(Calendar(s),ChartBox())
 }
 
 
-templ Calendar(){
+templ Calendar(slice []types.Task){
 <head>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
@@ -52,7 +52,7 @@ templ Calendar(){
             width: 100%;
             max-width: 500px;
             background: var(--bg-color);
-            padding: 30px 20px;
+            padding: 150px 20px;
             border-radius: 10px;
 
         }
@@ -146,6 +146,15 @@ templ Calendar(){
         .credits span {
             color: var(--primary-color);
         }
+        #desc{
+        background-color:#ffb4bf;
+        padding: 5px 5px;
+        margin-bottom:20px;
+        border-radius:5px;
+        word-wrap: break-word;
+
+
+        }
 
     </style>
 </head>
@@ -193,7 +202,14 @@ templ Calendar(){
 
             </form>
         </div>
-        <div id="ctn"></div>
+        <div>
+        for _,values := range slice{
+        <div id="desc">{values.Description}</div>
+        }
+
+        </div>
+
+
 
     </div>
 </div>
@@ -260,7 +276,7 @@ templ Calendar(){
         let k=0;
         if(firstDay.getDay()!==0) {
             for (let x = firstDay.getDay() - 1 ; x > 0; x--) {
-                days += `<button class="day prev">${prevLastDayDate - x+1}</button>`;
+                days += `<div class="day prev">${prevLastDayDate - x+1}</div>`;
                 k++;
 
             }
@@ -268,7 +284,7 @@ templ Calendar(){
         k = 6;
         if(firstDay.getDay()===0) {
             for (let x = 6 ; x > 0; x--) {
-                days += `<button class="day prev">${prevLastDayDate - k+1}</button>`;
+                days += `<div class="day prev">${prevLastDayDate - k+1}</div>`;
                 k--;
             }
         }
@@ -279,15 +295,15 @@ templ Calendar(){
                 currentMonth === new Date().getMonth() &&
                 currentYear === new Date().getFullYear()
             ) {
-                days += `<button  hx-post="/api/get-task" hx-target="#calendar-task" hx-swap="innerHTML"  class="day today" name="show" value="${currentYear},${currentMonth+1},${i}">${i}</button>`;
+                days += `<div   class="day today" name="show" value="${currentYear},${currentMonth+1},${i}">${i}</div>`;
 
             } else {
-                days += `<button hx-post="/api/get-task" hx-target="#calendar-task" hx-swap="innerHTML"  class="day " name="show" value="${currentYear},${currentMonth+1},${i}">${i}</button>`;
+                days += `<div  class="day" name="show" value="${currentYear},${currentMonth+1},${i}">${i}</div>`;
             }
         }
 
         for (let j = 1; j <= nextDays+1; j++) {
-            days += `<button  hx-post="/api/get-task" hx-target="#calendar-task" hx-swap="innerHTML"  class="day" name="show" value="${currentYear},${currentMonth+1},${j}">${j}</button>`;
+            days += `<div    class="day" name="show" value="${currentYear},${currentMonth+1},${j}">${j}</div>`;
 
         }
 
@@ -373,8 +389,9 @@ templ ChartBox(){
 </head>
 <div id="c-box">
 @Chart1()
-
 @Chart3()
+
+
 </div>
 
 
@@ -480,6 +497,8 @@ templ Chart1(){
 
         updateChart();
     </script>
+<p>Tasks category chart</p>
+
     </div>
 }
 
@@ -643,7 +662,7 @@ return{
   colors: ["#1A56DB", "#FDBA8C"],
   series: [
     {
-      name: "Organic",
+      name: "Streak",
       color: "#ff0000",
       data: [
         { x: "Mon", y: mon },
@@ -738,6 +757,10 @@ return{
 
 updateChart3();
 </script>
+<br>
+<br>
+<br>
+<p>Last 7 day pomodoro streak</p>
 </div>
 
 
@@ -759,3 +782,4 @@ templ SendDataC1(c1, c2, c3 string){
 
 
 }
+

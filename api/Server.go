@@ -45,17 +45,18 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/api/login", prepareHandle(s.handleLogin))
 	router.HandleFunc("/api/dashboard", prepareHandle(s.handleDashboard))
 	router.HandleFunc("/api/logout", prepareHandle(s.handleLogOut))
+
 	router.HandleFunc("/api/add-task", prepareHandle(s.handleAddTask))
 	router.HandleFunc("/api/delete-task", prepareHandle(s.handleDeleteTask))
+	router.HandleFunc("/api/get-task", prepareHandle(s.handleGetTask))
 	router.HandleFunc("/api/pomodoro", prepareHandle(s.handlePomodoro))
 	router.HandleFunc("/api/set-pomodoro", prepareHandle(s.handleSetPomodoro))
 
-	router.HandleFunc("/api/test/dashboard", prepareHandle(s.handleTestDashboard))
-	router.HandleFunc("/api/test/tasks", prepareHandle(s.handleTestTasks))
-	router.HandleFunc("/api/get-task", prepareHandle(s.handleGetTask))
-
 	router.HandleFunc("/api/test/chart-1", prepareHandle(s.TestChart))
 	router.HandleFunc("/api/test/chart-3", prepareHandle(s.TestChart3))
+
+	router.HandleFunc("/api/test/dashboard", prepareHandle(s.handleTestDashboard))
+	router.HandleFunc("/api/test/tasks", prepareHandle(s.handleTestTasks))
 
 	router.HandleFunc("/api/task", prepareHandle(s.handleTask))
 

@@ -21,21 +21,46 @@ func Render(w http.ResponseWriter, r *http.Request, component templ.Component) e
 }
 
 func (s *APIServer) handleRegister(w http.ResponseWriter, r *http.Request) error {
-	if r.Method != http.MethodPost {
-		return WriteToJson(w, http.StatusBadRequest, types.Error{Error: types.UnsOp})
-	}
-	accReq := new(types.Account)
 
-	if err := json.NewDecoder(r.Body).Decode(&accReq); err != nil {
-		return WriteToJson(w, http.StatusBadRequest, types.Error{Error: types.Blank})
-	}
-	acc := types.NewAccount(accReq.Nickname, accReq.Email, accReq.Password)
+	if r.Method == http.MethodGet {
+		logged, _ := s.IsLogged(r)
 
-	if err := s.Store.CreateAccount(acc); err != nil {
-		return WriteToJson(w, http.StatusBadRequest, types.Error{Error: types.Cant})
+		if logged {
+			Render(w, r, components.SendErrorCode(1))
+		}
+		Render(w, r, components.RegisterForm())
+		return nil
 	}
-	return WriteToJson(w, http.StatusOK, acc)
 
+	if r.Method == http.MethodPost {
+		email := r.FormValue("email")
+		nickname := r.FormValue("nickname")
+		password := r.FormValue("password")
+		rePassword := r.FormValue("re-password")
+
+		if password != rePassword {
+			Render(w, r, components.SendErrorCode(2))
+			Render(w, r, components.RegisterForm())
+			return nil
+		}
+
+		acc := types.NewAccount(nickname, email, password)
+		err := s.Store.CreateAccount(acc)
+
+		if err != nil {
+			fmt.Println(err)
+			Render(w, r, components.SendErrorCode(3))
+			Render(w, r, components.RegisterForm())
+			return nil
+		}
+
+		http.Redirect(w, r, "/api/login", http.StatusSeeOther)
+
+		return nil
+	}
+
+	http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	return nil
 }
 
 type LoginInformation struct {
@@ -79,6 +104,7 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 			//tmpl.Execute(w, FormData{Success: false, Error: "Failed to create JWT token", Email: email, Password: password})
 			return nil
 		}
+		email, password = "", ""
 
 		//	tmpl.Execute(w, FormData{Success: true, Error: "", Email: email, Password: password})h
 		http.Redirect(w, r, "/api/dashboard", http.StatusSeeOther)
@@ -92,7 +118,7 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 
 }
 
-func (s *APIServer) handleDashboard(w http.ResponseWriter, r *http.Request) error {
+func (s *APIServer) handleTestDashboard(w http.ResponseWriter, r *http.Request) error {
 	if r.Method != http.MethodGet {
 		return WriteToJson(w, http.StatusBadRequest, types.Error{Error: types.UnsOp})
 	}
@@ -275,6 +301,7 @@ func (s *APIServer) handleTestTasks(w http.ResponseWriter, r *http.Request) erro
 }
 
 func (s *APIServer) handleGetTask(w http.ResponseWriter, r *http.Request) error {
+	fmt.Println("sdfg")
 	id, err := s.getID(r)
 	if err != nil {
 		return err
@@ -304,9 +331,13 @@ func (s *APIServer) handleGetTask(w http.ResponseWriter, r *http.Request) error 
 	return nil
 }
 
-func (s *APIServer) handleTestDashboard(w http.ResponseWriter, r *http.Request) error {
-
-	Render(w, r, components.DashboardProduction())
+func (s *APIServer) handleDashboard(w http.ResponseWriter, r *http.Request) error {
+	id, err := s.getID(r)
+	if err != nil {
+		return err
+	}
+	slice, err := s.Store.GetTaskByDate(id, time.Now())
+	Render(w, r, components.DashboardProduction(slice))
 
 	return nil
 

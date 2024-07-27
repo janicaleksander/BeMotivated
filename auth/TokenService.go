@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	jwt "github.com/golang-jwt/jwt/v5"
 	"net/http"
 	"os"
@@ -28,8 +29,9 @@ func CreateJWTTokenCookieUser(w http.ResponseWriter, id string) error {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET_JWT")))
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 	http.SetCookie(w, &http.Cookie{

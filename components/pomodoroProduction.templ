@@ -111,10 +111,7 @@ border-width:1.2px;
                 break;
          }
          t = parseInt(zm1,10);
-         t=0.25;
-         b=0.25;
-         console.log(t);
-         console.log(b)
+
         }
 
         function breakTime(v){
@@ -127,7 +124,6 @@ border-width:1.2px;
                             // Get today's date and time
                             var now = new Date().getTime();
 
-                            // Find the distance between now and the count down date
                             var distance = in15Minutes - now;
 
                             // Time calculations for days, hours, minutes and seconds
@@ -139,6 +135,8 @@ border-width:1.2px;
 
                             // If the count down is over, write some text
                             if (distance < 0) {
+                                setTimeout(() => {
+                                }, 1000);
                                 clearInterval(x);
                                 fetch('/api/set-pomodoro', {
                                     method: 'POST',
@@ -186,6 +184,7 @@ border-width:1.2px;
 
          var b1 = document.getElementById('fif');
          var b2 = document.getElementById('twe');
+         var b2 = document.getElementById('twe');
          var b3 = document.getElementById('thi');
          var b4 = document.getElementById('short');
          var b5 = document.getElementById('long');
@@ -231,10 +230,14 @@ border-width:1.2px;
                 var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
                 // Output the result in an element with id="countdown"
+                if(minutes >0 ||  seconds >0){
                 document.getElementById("countdown").innerHTML = minutes + "m " + seconds + "s ";
+                }
 
                 // If the count down is over, write some text
                 if (distance < 0) {
+                 setTimeout(() => {
+                   }, 1000);
                     clearInterval(x);
                     stopStyles();
                     breakTime(b);

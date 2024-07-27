@@ -47,11 +47,11 @@ templ Base(children ...templ.Component) {
             <ul class="flex justify-between items-center p-3">
                 <li class="inline-block p-4"><a href="#">HOME</a></li>
                 <div class="flex">
-                    <li id="dash_under"  class="inline-block p-4"><a href="/api/test/dashboard"  class="decoration-solid">DASHBOARD</a></li>
-                    <li id="tasks_under" class="inline-block p-4"><a href="/api/task">TASKS/missmycafe/projects</a></li>
+                    <li id="dash_under"  class="inline-block p-4"><a href="/api/dashboard"  class="decoration-solid">DASHBOARD</a></li>
+                    <li id="tasks_under" class="inline-block p-4"><a href="/api/task">TASKS</a></li>
                     <li id="pomodoro_under" class="inline-block p-4"><a href="/api/pomodoro">POMODORO</a></li>
                 </div>
-                <li class="inline-block p-4"><a href="#">PROFILE</a></li>
+                <li class="inline-block p-4"><a href="/api/profile">PROFILE</a></li>
             </ul>
         </nav>
     </header>
@@ -67,7 +67,7 @@ for _, child := range children {
     document.addEventListener("DOMContentLoaded", function() {
         var bodyClass = "";
         var currentPage = window.location.pathname;
-        if (currentPage === "/api/test/dashboard") {
+        if (currentPage === "/api/dashboard") {
             bodyClass = "dashboard";
         }
         if (currentPage === "/api/task") {
