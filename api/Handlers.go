@@ -93,7 +93,7 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 		accLog.Password = linfo.password
 		account, err := s.Store.GetAccount(accLog.Email, accLog.Password)
 		if err != nil {
-			Render(w, r, components.LoginForm("ERROR"))
+			Render(w, r, components.LoginForm("Wrong email or password"))
 			//	tmpl.Execute(w, FormData{Success: false, Error: "Invalid email or password", Email: email, Password: password})
 			return nil
 		}

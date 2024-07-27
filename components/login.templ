@@ -53,7 +53,10 @@ templ LoginForm(err string) {
                 Not a member?
                 <a href="#" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Create your account</a>
             </p>
-            <p>{ err }</p>
+
+            <div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
+              <span class="font-medium">{err}</span>
+            </div>
 
 
         </div>
