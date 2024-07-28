@@ -60,7 +60,7 @@ func NewPostgresDB() (*Postgres, error) {
 	if err != nil {
 		log.Fatalf("Error loading .env file")
 	}
-	databaseUrl := os.Getenv("SCHEMATOGO_URL")
+	databaseUrl := os.Getenv("DATABASE_URL")
 	if databaseUrl == "" {
 		log.Fatal("DATABASE_URL is not set")
 	}
