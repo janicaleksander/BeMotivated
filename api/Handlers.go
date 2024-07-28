@@ -9,6 +9,7 @@ import (
 	"github.com/janicaleksander/BeMotivated/components"
 	_ "github.com/janicaleksander/BeMotivated/components"
 	"github.com/janicaleksander/BeMotivated/types"
+
 	"net/http"
 	"os"
 	"strconv"

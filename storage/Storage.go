@@ -5,9 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/janicaleksander/BeMotivated/types"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
 	"log"
+	"os"
 	"time"
 )
 
@@ -43,16 +45,38 @@ func (s *Postgres) Init() (error, error, error) {
 }
 
 func NewPostgresDB() (*Postgres, error) {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
+	/*	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+			"password=%s dbname=%s sslmode=disable",
+			host, port, user, password, dbname)
+		db, err := sql.Open("postgres", psqlInfo)
+		if err != nil {
+			return nil, err
+		}
+		if err := db.Ping(); err != nil {
+			return nil, err
+		}
+		return &Postgres{db: db}, nil*/
+	err := godotenv.Load()
 	if err != nil {
-		return nil, err
+		log.Fatalf("Error loading .env file")
 	}
-	if err := db.Ping(); err != nil {
-		return nil, err
+	databaseUrl := os.Getenv("DATABASE_URL")
+	if databaseUrl == "" {
+		log.Fatal("DATABASE_URL is not set")
 	}
+	db, err := sql.Open("postgres", databaseUrl)
+	if err != nil {
+		log.Fatalf("Unable to connect to database: %v\n", err)
+	}
+	defer db.Close()
+
+	// Sprawdź połączenie
+	err = db.Ping()
+	if err != nil {
+		log.Fatalf("Cannot ping database: %v\n", err)
+	}
+
+	fmt.Println("Successfully connected to the database!")
 	return &Postgres{db: db}, nil
 }
 
