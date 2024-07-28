@@ -10,6 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -45,39 +46,80 @@ func (s *Postgres) Init() (error, error, error) {
 }
 
 func NewPostgresDB() (*Postgres, error) {
-	/*	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-			"password=%s dbname=%s sslmode=disable",
-			host, port, user, password, dbname)
-		db, err := sql.Open("postgres", psqlInfo)
-		if err != nil {
-			return nil, err
-		}
-		if err := db.Ping(); err != nil {
-			return nil, err
-		}
-		return &Postgres{db: db}, nil*/
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-	databaseUrl := os.Getenv("DATABASE_URL")
-	if databaseUrl == "" {
-		log.Fatal("DATABASE_URL is not set")
-	}
-	db, err := sql.Open("postgres", databaseUrl)
-	if err != nil {
-		log.Fatalf("Unable to connect to database: %v\n", err)
-	}
-	defer db.Close()
-
-	// Sprawdź połączenie
-	err = db.Ping()
-	if err != nil {
-		log.Fatalf("Cannot ping database: %v\n", err)
+		log.Fatal("Error loading .env file")
 	}
 
-	fmt.Println("Successfully connected to the database!")
+	dbUser := os.Getenv("dbUser")
+	dbPassword := os.Getenv("dbPassword")
+	dbHost := os.Getenv("dbHost")
+	dbName := os.Getenv("dbName")
+	dbPort := os.Getenv("dbPort")
+
+	p, _ := strconv.Atoi(dbPort)
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=require",
+		dbHost, p, dbUser, dbPassword, dbName)
+
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := db.Ping(); err != nil {
+		return nil, err
+	}
 	return &Postgres{db: db}, nil
+	/*	err := godotenv.Load()
+		if err != nil {
+			log.Fatalf("Error loading .env file")
+		}
+		databaseUrl := os.Getenv("DATABASE_URL")
+		if databaseUrl == "" {
+			log.Fatal("DATABASE_URL is not set")
+		}
+		db, err := sql.Open("postgres", databaseUrl)
+		if err != nil {
+			log.Fatalf("Unable to connect to database: %v\n", err)
+		}
+		defer db.Close()
+
+		// Sprawdź połączenie
+		err = db.Ping()
+		if err != nil {
+			log.Fatalf("Cannot ping database: %v\n", err)
+		}
+
+		fmt.Println("Successfully connected to the database!")
+		return &Postgres{db: db}, nil*/
+	/*	serviceURI := os.Getenv("DATABASE_URL")
+
+		conn, _ := url.Parse(serviceURI)
+		conn.RawQuery = "sslmode=verify-ca;sslrootcert=ca.pem"
+
+		db, err := sql.Open("postgres", conn.String())
+
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer db.Close()
+
+		rows, err := db.Query("SELECT version()")
+		if err != nil {
+			panic(err)
+		}
+
+		for rows.Next() {
+			var result string
+			err = rows.Scan(&result)
+			if err != nil {
+				panic(err)
+			}
+			fmt.Printf("Version: %s\n", result)
+		}
+		return &Postgres{db: db}, nil
+	*/
 }
 
 func (s *Postgres) createTaskTable() error {
