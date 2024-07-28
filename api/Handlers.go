@@ -7,7 +7,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/janicaleksander/BeMotivated/auth"
 	"github.com/janicaleksander/BeMotivated/components"
-	_ "github.com/janicaleksander/BeMotivated/components"
+
 	"github.com/janicaleksander/BeMotivated/types"
 
 	"net/http"
