@@ -393,7 +393,9 @@ func (s *APIServer) handleSetPomodoro(w http.ResponseWriter, r *http.Request) er
 	if err != nil {
 		return WriteToJson(w, http.StatusBadRequest, types.Error{Error: types.UnsOp})
 	}
-	s.Store.IncreasePomodoro(id)
+	if err := s.Store.IncreasePomodoro(id); err != nil {
+		fmt.Println(err)
+	}
 
 	return nil
 }

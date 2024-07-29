@@ -14,15 +14,6 @@ import (
 	"time"
 )
 
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
-	password = "qwop"
-
-	dbname = "postgres"
-)
-
 type Storage interface {
 	GetDataBase() (*sql.DB, error)
 	CreateAccount(*types.Account) error
