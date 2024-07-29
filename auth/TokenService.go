@@ -3,8 +3,6 @@ package auth
 import (
 	"fmt"
 	jwt "github.com/golang-jwt/jwt/v5"
-	"github.com/joho/godotenv"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -29,10 +27,10 @@ func CreateJWTTokenCookieUser(w http.ResponseWriter, id string) error {
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	/*	err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}*/
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))

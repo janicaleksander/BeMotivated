@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/janicaleksander/BeMotivated/types"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
 	"log"
@@ -37,10 +36,10 @@ func (s *Postgres) Init() (error, error, error) {
 }
 
 func NewPostgresDB() (*Postgres, error) {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	/*	err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}*/
 
 	dbUser := os.Getenv("dbUser")
 	dbPassword := os.Getenv("dbPassword")
