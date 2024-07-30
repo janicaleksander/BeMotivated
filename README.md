@@ -18,7 +18,7 @@ BeMotivated is my first real-world project, designed to fulfill my personal need
 
 ### Run application:
 ```sh
-https://bemotivated.up.railway.app/api/register
+https://bemotivated-qw6s.onrender.com/api/register
 ```
 
 
