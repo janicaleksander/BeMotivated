@@ -83,7 +83,6 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 	if r.Method == http.MethodPost {
 		email := r.FormValue("email")
 		password := r.FormValue("password")
-		fmt.Println(email, password)
 		linfo := LoginInformation{
 			email:    email,
 			password: password,
@@ -146,7 +145,7 @@ func (s *APIServer) handleTestDashboard(w http.ResponseWriter, r *http.Request) 
 
 }
 
-func (S *APIServer) handleLogOut(w http.ResponseWriter, r *http.Request) error {
+func (s *APIServer) handleLogOut(w http.ResponseWriter, r *http.Request) error {
 	/*	if r.Method != http.MethodPost {
 		return WriteToJson(w, http.StatusBadRequest, types.Error{Error: types.UnsOp})
 	}*/
@@ -156,8 +155,8 @@ func (S *APIServer) handleLogOut(w http.ResponseWriter, r *http.Request) error {
 	}
 	auth.DefaultCookie(cookie)
 	http.SetCookie(w, cookie)
-	fmt.Println(cookie.Expires.UTC())
-	return WriteToJson(w, http.StatusOK, "Log out")
+	http.Redirect(w, r, "/api/login", 302)
+	return nil
 
 }
 
@@ -245,7 +244,6 @@ func (s *APIServer) handleAddTask(w http.ResponseWriter, r *http.Request) error 
 		dayInt, err = strconv.Atoi(d[0])
 	}
 
-	fmt.Println(yearInt, monthInt, dayInt)
 	category := r.FormValue("cat")
 
 	task := &types.Task{
@@ -257,7 +255,6 @@ func (s *APIServer) handleAddTask(w http.ResponseWriter, r *http.Request) error 
 	}
 
 	err = s.Store.CreateTask(task)
-	fmt.Println("id:", task.ItemID)
 
 	if err != nil {
 		fmt.Println(err)
@@ -302,7 +299,7 @@ func (s *APIServer) handleTestTasks(w http.ResponseWriter, r *http.Request) erro
 }
 
 func (s *APIServer) handleGetTask(w http.ResponseWriter, r *http.Request) error {
-	fmt.Println("sdfg")
+
 	id, err := s.getID(r)
 	if err != nil {
 		return err
@@ -325,7 +322,6 @@ func (s *APIServer) handleGetTask(w http.ResponseWriter, r *http.Request) error 
 	if err != nil {
 		return err
 	}
-	fmt.Print(sl)
 
 	Render(w, r, components.DayTaskSlice(sl))
 
@@ -365,7 +361,6 @@ func (s *APIServer) TestChart3(w http.ResponseWriter, r *http.Request) error {
 		fmt.Println(err)
 		return err
 	}
-	fmt.Println(slice)
 
 	return json.NewEncoder(w).Encode(slice)
 }
@@ -409,6 +404,20 @@ func (s *APIServer) handleTask(w http.ResponseWriter, r *http.Request) error {
 
 	Render(w, r, components.SendSlice(slice))
 	Render(w, r, components.TasksProduction())
+
+	return nil
+
+}
+func (s *APIServer) handleProfile(w http.ResponseWriter, r *http.Request) error {
+	flag, err := s.IsLogged(r)
+	if err != nil {
+		return WriteToJson(w, http.StatusBadRequest, types.Error{Error: types.UnsOp})
+	}
+	if !flag {
+		return WriteToJson(w, http.StatusBadRequest, types.Error{Error: types.AUTH})
+	}
+
+	Render(w, r, components.Profile())
 
 	return nil
 

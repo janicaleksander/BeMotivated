@@ -1,21 +1,18 @@
 package main
 
 import (
-	"fmt"
 	"github.com/janicaleksander/BeMotivated/api"
 	"github.com/janicaleksander/BeMotivated/storage"
-	"os"
+	"log"
 )
 
 func main() {
 	db, err := storage.NewPostgresDB()
 	if err != nil {
-		fmt.Println("xd")
+		log.Fatal(err)
 	}
 
-	port := os.Getenv("PORT")
-
-	server := api.BuildServer(":"+port, db)
+	server := api.BuildServer(":5050", db)
 	db.Init()
 	server.Run()
 
