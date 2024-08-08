@@ -24,6 +24,7 @@ func BuildServer(address string, storage storage.Storage) (s *APIServer) {
 func WriteToJson(w http.ResponseWriter, statusCode int, val any) error {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
+
 	return json.NewEncoder(w).Encode(val)
 }
 func prepareHandle(f apiFunc) http.HandlerFunc {
@@ -59,6 +60,8 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/api/test/tasks", prepareHandle(s.handleTestTasks))
 
 	router.HandleFunc("/api/task", prepareHandle(s.handleTask))
+
+	router.HandleFunc("/api/profile", prepareHandle(s.handleProfile))
 
 	log.Println("Running on: ", s.ListenAddress)
 	log.Fatal(http.ListenAndServe(s.ListenAddress, router))
