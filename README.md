@@ -24,3 +24,5 @@ https://bemotivated-1.onrender.com/api/register
 Due to free hosting, it takes a while to load.
 
 
+(https://github.com/user-attachments/assets/91c02cbc-24c0-4e10-a28f-06f9a3869888)
+(https://github.com/user-attachments/assets/066fdcec-3087-4030-ae5d-6147baab31b1)
