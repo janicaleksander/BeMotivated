@@ -21,6 +21,6 @@ BeMotivated is my first real-world project, designed to fulfill my personal need
 https://bemotivated-1.onrender.com/api/register
 
 ```
-
+Due to free hosting, it takes a while to load.
 
 
